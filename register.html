@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Page</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+            transition: background-color 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        header {
+            background-color: #3498db;
+            padding: 20px;
+            text-align: center;
+            color: #fff;
+            border-radius: 5px 5px 0 0;
+            margin-bottom: 20px;
+        }
+
+        form {
+            max-width: 400px;
+            width: 100%;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            font-size: 14px;
+        }
+
+        button {
+            background-color: #3498db;
+            color: #fff;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        small {
+            display: block;
+            margin-top: 10px;
+            color: #777;
+            font-size: 12px;
+        }
+
+        .password-strength {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #777;
+        }
+
+        .weak, .medium, .strong {
+            font-weight: bold;
+        }
+
+        .weak {
+            color: #e74c3c;
+        }
+
+        .medium {
+            color: #f39c12;
+        }
+
+        .strong {
+            color: #2ecc71;
+        }
+
+        /* Dynamic theme styles */
+        .dark-mode {
+            background-color: #333;
+            color: #fff;
+        }
+
+        /* Login link styles */
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #777;
+        }
+
+        .login-link a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .login-link a:hover {
+            color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Register Page</h1>
+    <label for="themeSwitch">Dark Mode</label>
+    <input type="checkbox" id="themeSwitch">
+</header>
+
+<form onsubmit="return validateForm()">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required>
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required minlength="8">
+    <small>Password must be at least 8 characters long and contain a special character and a number.</small>
+    <div class="password-strength" id="passwordStrength">Password Strength: <span id="strengthText"></span></div>
+
+    <button type="submit">Register</button>
+</form>
+
+<div class="login-link">
+    <p>Already have an account? <a href="#">Log in</a></p>
+</div>
+
+<script>
+    // Theme switcher
+    const themeSwitch = document.getElementById('themeSwitch');
+    const body = document.body;
+
+    themeSwitch.addEventListener('change', () => {
+        body.classList.toggle('dark-mode');
+    });
+
+    // Form validation and password strength
+    function validateForm() {
+        const username = document.getElementById('username').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        if (username.trim() === '' || email.trim() === '' || password.trim() === '') {
+            alert('Please fill in all fields.');
+            return false;
+        }
+
+        const passwordValid = isPasswordValid(password);
+
+        if (!passwordValid.isValid) {
+            alert(passwordValid.message);
+            return false;
+        }
+
+        // Additional validation logic can be added here
+
+        return true;
+    }
+
+    function checkPasswordStrength(password) {
+        if (password.length < 8 || !containsSpecialChar(password) || !containsNumber(password)) {
+            return 'Weak';
+        }
+
+        // Additional strength checks can be added here
+        // For simplicity, let's just check for the presence of uppercase and lowercase letters
+
+        if (/[a-z]/.test(password) && /[A-Z]/.test(password)) {
+            return 'Strong';
+        }
+
+        return 'Medium';
+    }
+
+    function isPasswordValid(password) {
+        if (password.length < 8) {
+            return { isValid: false, message: 'Password must be at least 8 characters long.' };
+        }
+
+        if (!containsSpecialChar(password)) {
+            return { isValid: false, message: 'Password must contain at least one special character.' };
+        }
+
+        if (!containsNumber(password)) {
+            return { isValid: false, message: 'Password must contain at least one number.' };
+        }
+
+        return { isValid: true };
+    }
+
+    function containsSpecialChar(str) {
+        return /[!@#$%^&*(),.?":{}|<>]/.test(str);
+    }
+
+    function containsNumber(str) {
+        return /\d/.test(str);
+    }
+
+    const passwordInput = document.getElementById('password');
+    const strengthText = document.getElementById('strengthText');
+
+    passwordInput.addEventListener('input', () => {
+        const password = passwordInput.value;
+        const strength = checkPasswordStrength(password);
+
+        // Update strength text and styling
+        strengthText.textContent = strength;
+        strengthText.className = strength.toLowerCase();
+    });
+</script>
+
+</body>
+</html>
